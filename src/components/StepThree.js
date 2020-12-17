@@ -1,7 +1,7 @@
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 
-const StepThree = ({ newContact }) => {
+const StepThree = ({ newContact, handleNext }) => {
   let field = [];
   for (let key in newContact[0]) {
     field.push(
@@ -17,8 +17,10 @@ const StepThree = ({ newContact }) => {
         Below is the first contact in your spreadsheet.
       </Typography>
       {field}
-      <pre>{JSON.stringify(newContact[0], null, 2)}</pre>
-      <Button variant="contained">Continue</Button>
+      <pre>{JSON.stringify(newContact, null, 2)}</pre>
+      <Button variant="contained" onClick={handleNext}>
+        Continue
+      </Button>
     </div>
   );
 };

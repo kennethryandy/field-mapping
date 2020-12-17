@@ -1,10 +1,10 @@
 import { useState } from "react";
 //mui
 import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
-import Typography from "@material-ui/core/Typography";
 //components
 import StepOne from "./components/StepOne";
 import StepTwo from "./components/StepTwo";
@@ -14,6 +14,9 @@ import StepFour from "./components/StepFour";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    // display: "flex",
+    // alignItems: "center",
+    // justifyContent: "space-between",
   },
   button: {
     marginRight: theme.spacing(1),
@@ -45,9 +48,9 @@ export default function App() {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  // const handleBack = () => {
-  //   setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  // };
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
   function getStepContent(step) {
     switch (step) {
@@ -73,7 +76,7 @@ export default function App() {
       case 2:
         return <StepThree newContact={newContact} />;
       case 3:
-        return <StepFour />;
+        return <StepFour newContact={newContact} />;
       default:
         return "Unknown step";
     }
@@ -105,13 +108,14 @@ export default function App() {
           );
         })}
       </Stepper>
+      {activeStep !== 0 && (
+        <Button variant="contained" onClick={handleBack}>
+          Back
+        </Button>
+      )}
       <div>
         {activeStep === steps.length ? (
-          <div>
-            <Typography className={classes.instructions}>
-              All steps completed - you&apos;re finished
-            </Typography>
-          </div>
+          <div>//When reach last steps</div>
         ) : (
           getStepContent(activeStep)
         )}

@@ -137,6 +137,7 @@ const StepTwo = ({
   const handleOpenAdd = (key) => {
     setOpenAdd((prevState) => ({ ...prevState, [key]: true }));
     setInput((prevState) => ({ ...prevState, [key]: "" }));
+    setOpen({});
   };
 
   const confirmFields = () => {
@@ -152,7 +153,6 @@ const StepTwo = ({
 
   const renameKeys = (keysMap, obj) =>
     Object.keys(obj).reduce((acc, key) => {
-      console.log(keysMap[key] || key, obj[key]);
       return {
         ...acc,
         ...{ [keysMap[key] || key]: obj[key] },
@@ -178,8 +178,14 @@ const StepTwo = ({
     const updatedObj = delete newFields[key];
     setNewFields(updatedObj);
   };
+
   return (
     <div>
+      <div style={{ margin: "0px 16px" }}>
+        <Typography variant="h6">
+          Found {contacts.length} conacts in:
+        </Typography>
+      </div>
       <div className={classes.fileHead}>
         <div className={classes.file}>
           <div>
