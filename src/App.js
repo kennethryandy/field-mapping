@@ -38,18 +38,15 @@ export default function App() {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  console.log(contacts);
+  // const handleBack = () => {
+  //   setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  // };
 
   function getStepContent(step) {
     switch (step) {
       case 0:
         return (
           <StepOne
-            contacts={contacts}
             setContacts={setContacts}
             handleNext={handleNext}
             setFilename={setFilename}

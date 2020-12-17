@@ -84,11 +84,11 @@ const StepTwo = ({
 }) => {
   const classes = useStyles();
   const [input, setInput] = useState({});
-  const [keys, setKeys] = useState(Object.keys(contacts[0]));
+  const [keys] = useState(Object.keys(contacts[0]));
   const [open, setOpen] = useState({});
   const [search, setSearch] = useState("");
   const [openAdd, setOpenAdd] = useState({});
-  const [autoPilotField, setAutoPilotField] = useState([
+  const [autoPilotField] = useState([
     "Name",
     "Phone",
     "Email",
@@ -104,7 +104,7 @@ const StepTwo = ({
         field.toLowerCase().includes(search?.toLowerCase())
       )
     );
-  }, [search, setAutoPilotField]);
+  }, [search, autoPilotField]);
 
   const handleChange = (e) => {
     setInput((prevState) => ({

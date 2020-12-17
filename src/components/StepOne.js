@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { parse } from "papaparse";
 import { useDropzone } from "react-dropzone";
 //mui
@@ -27,21 +27,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const StepOne = ({ contacts, setContacts, handleNext, setFilename }) => {
+const StepOne = ({ setContacts, handleNext, setFilename }) => {
   const classes = useStyles();
 
-  const onDrop = useCallback((acceptedFiles) => {
-    acceptedFiles.forEach(async (file) => {
-      const text = await file.text();
-      const result = parse(text, { header: true });
-      setFilename(file.name);
-      setContacts(result.data);
-      if (result.data.length > 0) {
-        handleNext();
-      }
-    });
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      acceptedFiles.forEach(async (file) => {
+        const text = await file.text();
+        const result = parse(text, { header: true });
+        setFilename(file.name);
+        setContacts(result.data);
+        if (result.data.length > 0) {
+          handleNext();
+        }
+      });
+    },
+    [setFilename, setContacts, handleNext]
+  );
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: ".csv, application/vnd.ms-excel, text/csv",
   });
