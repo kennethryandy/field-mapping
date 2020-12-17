@@ -112,6 +112,10 @@ const StepTwo = ({
       [e.target.name]: e.target.value,
     }));
     setSearch(e.target.value);
+    setNewFields((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleSelect = (key, field) => {
@@ -137,6 +141,7 @@ const StepTwo = ({
       handleNext();
     }
   };
+  console.log(newFields);
 
   const renameKeys = (keysMap, obj) =>
     Object.keys(obj).reduce(
