@@ -29,14 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 const StepOne = ({ contacts, setContacts, handleNext, setFilename }) => {
   const classes = useStyles();
-  const renameKeys = (keysMap, obj) =>
-    Object.keys(obj).reduce(
-      (acc, key) => ({
-        ...acc,
-        ...{ [keysMap[key] || key]: obj[key] },
-      }),
-      {}
-    );
+
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach(async (file) => {
       const text = await file.text();
@@ -56,8 +49,6 @@ const StepOne = ({ contacts, setContacts, handleNext, setFilename }) => {
   const openFile = () => {
     document.getElementById("fileUpload").click();
   };
-
-  console.log(contacts);
 
   return (
     <div className={classes.root}>

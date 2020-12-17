@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useOnclickOutside from "react-cool-onclickoutside";
 //mui
-import CheckIcon from "@material-ui/icons/Check";
+import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import List from "@material-ui/core/List";
@@ -8,6 +9,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
+import CheckIcon from "@material-ui/icons/Check";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -64,16 +66,90 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 999,
     position: "absolute",
     width: "95%",
+    maxHeight: 200,
+    overflowY: "scroll",
   },
   addList: {
     backgroundColor: "#33eb91",
   },
 }));
 
-const StepTwo = ({ contacts, filename, autoPilotField, setAutoPilotField }) => {
+const StepTwo = ({
+  contacts,
+  setContacts,
+  filename,
+  newFields,
+  setNewFields,
+  handleNext,
+}) => {
   const classes = useStyles();
+  const [input, setInput] = useState({});
+  const [keys, setKeys] = useState(Object.keys(contacts[0]));
   const [open, setOpen] = useState({});
-  const keys = Object.keys(contacts[0]);
+  const [search, setSearch] = useState("");
+  const [openAdd, setOpenAdd] = useState({});
+  const [autoPilotField, setAutoPilotField] = useState([
+    "Name",
+    "Phone",
+    "Email",
+    "Phone number",
+    "Date",
+  ]);
+  const [filteredField, setFilteredField] = useState([]);
+  const ref = useOnclickOutside(() => handleClose());
+
+  useEffect(() => {
+    setFilteredField(
+      autoPilotField?.filter((field) =>
+        field.toLowerCase().includes(search?.toLowerCase())
+      )
+    );
+  }, [search, setAutoPilotField]);
+
+  const handleChange = (e) => {
+    setInput((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+    setSearch(e.target.value);
+  };
+
+  const handleSelect = (key, field) => {
+    setNewFields((prevState) => ({
+      ...prevState,
+      [key]: field,
+    }));
+    setInput((prevState) => ({
+      ...prevState,
+      [key]: field,
+    }));
+    handleClose();
+  };
+
+  const handleOpenAdd = (key) => {
+    setOpenAdd({ [key]: true });
+    setInput((prevState) => ({ ...prevState, [key]: "" }));
+  };
+
+  const confirmFields = () => {
+    if (Object.keys(newFields).length === keys.length) {
+      setContacts(contacts.map((contact) => renameKeys(newFields, contact)));
+      handleNext();
+    }
+  };
+
+  const renameKeys = (keysMap, obj) =>
+    Object.keys(obj).reduce(
+      (acc, key) => ({
+        ...acc,
+        ...{ [keysMap[key] || key]: obj[key] },
+      }),
+      {}
+    );
+
+  const handleClose = () => {
+    setOpen({});
+  };
 
   return (
     <div>
@@ -101,30 +177,46 @@ const StepTwo = ({ contacts, filename, autoPilotField, setAutoPilotField }) => {
             </Typography>
           </div>
         </div>
-        {keys.map((key) => (
-          <div className={classes.fields}>
+        {keys.map((key, i) => (
+          <div className={classes.fields} key={i}>
             <div className={classes.keys}>
               <Typography variant="body1">{key}</Typography>
             </div>
             <div className={classes.input}>
-              <input
-                type="text"
-                name={key}
-                onFocus={() => setOpen({ [key]: true })}
-                onBlur={() => setOpen({ [key]: false })}
-              />
+              {openAdd[key] ? (
+                <input type="text" name={key} value={input[key]} />
+              ) : (
+                <input
+                  type="text"
+                  name={key}
+                  value={input[key]}
+                  onFocus={() => setOpen({ [key]: true })}
+                  onChange={handleChange}
+                  placeholder="Select field"
+                  autoComplete="off"
+                />
+              )}
               {open[key] && (
-                <Paper elevation={3} className={classes.paper}>
+                <Paper elevation={3} className={classes.paper} ref={ref}>
                   <List dense>
-                    <ListItem button divider className={classes.addList}>
+                    <ListItem
+                      button
+                      divider
+                      className={classes.addList}
+                      onClick={() => handleOpenAdd(key)}
+                    >
                       <ListItemIcon>
                         <AddCircleIcon />
                       </ListItemIcon>
                       <ListItemText primary="Add Custom Field" />
                     </ListItem>
-                    {autoPilotField.map((fields) => (
-                      <ListItem button divider>
-                        <ListItemText primary={fields} />
+                    {filteredField.map((field) => (
+                      <ListItem
+                        button
+                        divider
+                        onClick={() => handleSelect(key, field)}
+                      >
+                        <ListItemText primary={field} />
                       </ListItem>
                     ))}
                   </List>
@@ -134,6 +226,9 @@ const StepTwo = ({ contacts, filename, autoPilotField, setAutoPilotField }) => {
           </div>
         ))}
       </div>
+      <Button variant="contained" onClick={confirmFields}>
+        Continue
+      </Button>
     </div>
   );
 };

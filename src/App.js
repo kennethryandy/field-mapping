@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 //components
 import StepOne from "./components/StepOne";
 import StepTwo from "./components/StepTwo";
+import StepThree from "./components/StepThree";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,19 +23,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 function getSteps() {
-  return ["Upload Spreadsheet", "Map Fields", "Create an ad"];
+  return ["Upload Spreadsheet", "Map Fields", "Confirm Mappings"];
 }
 
 export default function App() {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
   const [contacts, setContacts] = useState([]);
-  const [autoPilotField, setAutoPilotField] = useState([
-    "Name",
-    "Phone",
-    "Email",
-    "Phone number",
-  ]);
+  const [newFields, setNewFields] = useState({});
   const [filename, setFilename] = useState("");
   const steps = getSteps();
 
@@ -45,6 +41,8 @@ export default function App() {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
+  console.log(contacts);
 
   function getStepContent(step) {
     switch (step) {
@@ -61,13 +59,15 @@ export default function App() {
         return (
           <StepTwo
             contacts={contacts}
-            setAutoPilotField={setAutoPilotField}
-            autoPilotField={autoPilotField}
+            setContacts={setContacts}
             filename={filename}
+            setNewFields={setNewFields}
+            newFields={newFields}
+            handleNext={handleNext}
           />
         );
       case 2:
-        return "This is the bit I really care about!";
+        return <StepThree contacts={contacts} />;
       default:
         return "Unknown step";
     }
@@ -85,6 +85,10 @@ export default function App() {
           if (index === 1) {
             labelProps.optional =
               "Map the fields in your spreadsheet to Autopilot's Fields.";
+          }
+          if (index === 2) {
+            labelProps.optional =
+              "Confirm you've correctly mapped your fields. Below is the first contact in your spreadsheet.";
           }
           return (
             <Step key={label} {...stepProps}>
