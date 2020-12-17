@@ -10,6 +10,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import CheckIcon from "@material-ui/icons/Check";
+import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     border: "1px solid #33eb91",
-    maxWidth: 160,
+    // maxWidth: 160,
     "& div": {
       backgroundColor: "#33eb91",
       height: "100%",
@@ -72,15 +73,22 @@ const useStyles = makeStyles((theme) => ({
   addList: {
     backgroundColor: "#33eb91",
   },
+  addCustomField: {
+    display: "flex",
+    alignItems: "center",
+    "& svg": {
+      cursor: "pointer",
+    },
+  },
 }));
 
 const StepTwo = ({
   contacts,
-  setContacts,
   filename,
   newFields,
   setNewFields,
   handleNext,
+  setNewContact,
 }) => {
   const classes = useStyles();
   const [input, setInput] = useState({});
@@ -88,7 +96,7 @@ const StepTwo = ({
   const [open, setOpen] = useState({});
   const [search, setSearch] = useState("");
   const [openAdd, setOpenAdd] = useState({});
-  const [autoPilotField] = useState([
+  const [autoPilotField, setAutoPilotField] = useState([
     "Name",
     "Phone",
     "Email",
@@ -112,10 +120,6 @@ const StepTwo = ({
       [e.target.name]: e.target.value,
     }));
     setSearch(e.target.value);
-    setNewFields((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
   };
 
   const handleSelect = (key, field) => {
@@ -131,31 +135,49 @@ const StepTwo = ({
   };
 
   const handleOpenAdd = (key) => {
-    setOpenAdd({ [key]: true });
+    setOpenAdd((prevState) => ({ ...prevState, [key]: true }));
     setInput((prevState) => ({ ...prevState, [key]: "" }));
   };
 
   const confirmFields = () => {
+    console.log(newFields, contacts[0]);
     if (Object.keys(newFields).length === keys.length) {
-      setContacts(contacts.map((contact) => renameKeys(newFields, contact)));
+      const newContact = contacts.map((contact) =>
+        renameKeys(newFields, contact)
+      );
+      setNewContact(newContact);
       handleNext();
     }
   };
-  console.log(newFields);
 
   const renameKeys = (keysMap, obj) =>
-    Object.keys(obj).reduce(
-      (acc, key) => ({
+    Object.keys(obj).reduce((acc, key) => {
+      console.log(keysMap[key] || key, obj[key]);
+      return {
         ...acc,
         ...{ [keysMap[key] || key]: obj[key] },
-      }),
-      {}
-    );
+      };
+    }, {});
 
   const handleClose = () => {
     setOpen({});
   };
 
+  const handleAddCustomFieldChange = (e) => {
+    setInput((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleRemoveAdd = (key) => {
+    setOpenAdd((prevState) => ({
+      ...prevState,
+      [key]: false,
+    }));
+    const updatedObj = delete newFields[key];
+    setNewFields(updatedObj);
+  };
   return (
     <div>
       <div className={classes.fileHead}>
@@ -189,7 +211,26 @@ const StepTwo = ({
             </div>
             <div className={classes.input}>
               {openAdd[key] ? (
-                <input type="text" name={key} value={input[key]} />
+                <div className={classes.addCustomField}>
+                  <input
+                    type="text"
+                    name={`add${key}`}
+                    value={input[`add${key}`]}
+                    placeholder="Custom field"
+                    onBlur={() => {
+                      setNewFields((prevState) => ({
+                        ...prevState,
+                        [key]: input[`add${key}`],
+                      }));
+                      setAutoPilotField((prevState) => [
+                        ...prevState,
+                        input[`add${key}`],
+                      ]);
+                    }}
+                    onChange={handleAddCustomFieldChange}
+                  />
+                  <RemoveCircleIcon onClick={() => handleRemoveAdd(key)} />
+                </div>
               ) : (
                 <input
                   type="text"
@@ -199,6 +240,12 @@ const StepTwo = ({
                   onChange={handleChange}
                   placeholder="Select field"
                   autoComplete="off"
+                  onBlur={() => {
+                    setSearch("");
+                    if (!(autoPilotField.indexOf(input[key]) > -1)) {
+                      setInput((prevState) => ({ ...prevState, [key]: "" }));
+                    }
+                  }}
                 />
               )}
               {open[key] && (

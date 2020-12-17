@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import StepOne from "./components/StepOne";
 import StepTwo from "./components/StepTwo";
 import StepThree from "./components/StepThree";
+import StepFour from "./components/StepFour";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,7 +24,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 function getSteps() {
-  return ["Upload Spreadsheet", "Map Fields", "Confirm Mappings"];
+  return [
+    "Upload Spreadsheet",
+    "Map Fields",
+    "Confirm Mappings",
+    "Select Duplicate Strategy",
+  ];
 }
 
 export default function App() {
@@ -32,6 +38,7 @@ export default function App() {
   const [contacts, setContacts] = useState([]);
   const [newFields, setNewFields] = useState({});
   const [filename, setFilename] = useState("");
+  const [newContact, setNewContact] = useState([]);
   const steps = getSteps();
 
   const handleNext = () => {
@@ -56,15 +63,17 @@ export default function App() {
         return (
           <StepTwo
             contacts={contacts}
-            setContacts={setContacts}
             filename={filename}
             setNewFields={setNewFields}
             newFields={newFields}
             handleNext={handleNext}
+            setNewContact={setNewContact}
           />
         );
       case 2:
-        return <StepThree contacts={contacts} />;
+        return <StepThree newContact={newContact} />;
+      case 3:
+        return <StepFour />;
       default:
         return "Unknown step";
     }
@@ -85,7 +94,7 @@ export default function App() {
           }
           if (index === 2) {
             labelProps.optional =
-              "Confirm you've correctly mapped your fields. Below is the first contact in your spreadsheet.";
+              "Confirm you've correctly mapped your fields.";
           }
           return (
             <Step key={label} {...stepProps}>
