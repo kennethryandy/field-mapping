@@ -3,7 +3,7 @@ import Button from "@material-ui/core/Button";
 
 const StepThree = ({ newContact, handleNext, handleBack, classes }) => {
   return (
-    <div>
+    <div style={{ marginLeft: 24 }}>
       <Typography variant="h6">Field Mapping Preview</Typography>
       <Typography variant="body2" color="textSecondary" gutterBottom>
         Below is the first contact in your spreadsheet.
