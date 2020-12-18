@@ -6,7 +6,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 
-const StepFour = ({ newContact }) => {
+const StepFour = ({ newContact, handleBack, classes }) => {
   const [value, setValue] = useState("update_empty");
 
   const handleChange = (event) => {
@@ -28,7 +28,7 @@ const StepFour = ({ newContact }) => {
 
   return (
     <div>
-      <FormControl component="fieldset">
+      <FormControl component="fieldset" className={classes.formRadios}>
         <FormLabel component="legend">
           If an existing contact is in the spreadsheet:
         </FormLabel>
@@ -54,7 +54,10 @@ const StepFour = ({ newContact }) => {
           />
         </RadioGroup>
       </FormControl>
-      <div>
+      <div className={classes.btns}>
+        <Button onClick={handleBack} variant="contained">
+          Back
+        </Button>
         <Button onClick={handleConfirm} variant="contained">
           import {newContact.length} contacts
         </Button>

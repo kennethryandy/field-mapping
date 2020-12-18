@@ -4,32 +4,9 @@ import { useDropzone } from "react-dropzone";
 //mui
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
 import UploadIcon from "@material-ui/icons/CloudUpload";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
-    "& h5": {
-      fontWeight: "bold",
-    },
-  },
-  iconRoot: {
-    fontSize: "5rem",
-  },
-  btn: {
-    marginTop: "1.2rem",
-    textTransform: "capitalize",
-  },
-}));
-
-const StepOne = ({ setContacts, handleNext, setFilename }) => {
-  const classes = useStyles();
-
+const StepOne = ({ setContacts, handleNext, setFilename, classes }) => {
   const onDrop = useCallback(
     (acceptedFiles) => {
       acceptedFiles.forEach(async (file) => {
@@ -54,7 +31,7 @@ const StepOne = ({ setContacts, handleNext, setFilename }) => {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.fileInputWrapper}>
       <div {...getRootProps()}>
         <input {...getInputProps()} id="fileUpload" />
         <UploadIcon classes={{ root: classes.iconRoot }} />

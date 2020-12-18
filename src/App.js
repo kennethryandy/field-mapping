@@ -1,31 +1,15 @@
 import { useState } from "react";
 //mui
-import { makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
+import useStyles from "./styles";
 //components
 import StepOne from "./components/StepOne";
 import StepTwo from "./components/StepTwo";
 import StepThree from "./components/StepThree";
 import StepFour from "./components/StepFour";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "100%",
-    // display: "flex",
-    // alignItems: "center",
-    // justifyContent: "space-between",
-  },
-  button: {
-    marginRight: theme.spacing(1),
-  },
-  instructions: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}));
 function getSteps() {
   return [
     "Upload Spreadsheet",
@@ -42,6 +26,7 @@ export default function App() {
   const [newFields, setNewFields] = useState({});
   const [filename, setFilename] = useState("");
   const [newContact, setNewContact] = useState([]);
+  const [input, setInput] = useState({});
   const steps = getSteps();
 
   const handleNext = () => {
@@ -60,6 +45,7 @@ export default function App() {
             setContacts={setContacts}
             handleNext={handleNext}
             setFilename={setFilename}
+            classes={classes}
           />
         );
       case 1:
@@ -70,13 +56,30 @@ export default function App() {
             setNewFields={setNewFields}
             newFields={newFields}
             handleNext={handleNext}
+            handleBack={handleBack}
             setNewContact={setNewContact}
+            classes={classes}
+            input={input}
+            setInput={setInput}
           />
         );
       case 2:
-        return <StepThree newContact={newContact} />;
+        return (
+          <StepThree
+            newContact={newContact}
+            handleNext={handleNext}
+            handleBack={handleBack}
+            classes={classes}
+          />
+        );
       case 3:
-        return <StepFour newContact={newContact} />;
+        return (
+          <StepFour
+            newContact={newContact}
+            handleBack={handleBack}
+            classes={classes}
+          />
+        );
       default:
         return "Unknown step";
     }
@@ -108,14 +111,10 @@ export default function App() {
           );
         })}
       </Stepper>
-      {activeStep !== 0 && (
-        <Button variant="contained" onClick={handleBack}>
-          Back
-        </Button>
-      )}
       <div>
         {activeStep === steps.length ? (
-          <div>//When reach last steps</div>
+          //When reach last steps
+          <div>Finish</div>
         ) : (
           getStepContent(activeStep)
         )}

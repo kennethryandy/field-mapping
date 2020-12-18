@@ -11,87 +11,19 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import CheckIcon from "@material-ui/icons/Check";
 import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
-import { makeStyles } from "@material-ui/core/styles";
-
-const useStyles = makeStyles((theme) => ({
-  fields: {
-    display: "flex",
-  },
-  thead: {
-    fontWeight: "bold",
-  },
-  table: {
-    margin: theme.spacing(2),
-  },
-  keys: {
-    width: 240,
-    padding: "12px 8px",
-    border: "1px solid grey",
-  },
-  input: {
-    width: 240,
-    padding: "12px 8px",
-    border: "1px solid grey",
-    "& input": {
-      width: "100%",
-      padding: "6px 0px",
-    },
-    position: "relative",
-  },
-  fileHead: {
-    display: "flex",
-    alignItems: "center",
-  },
-  file: {
-    margin: theme.spacing(2),
-    height: 60,
-    display: "flex",
-    alignItems: "center",
-    border: "1px solid #33eb91",
-    // maxWidth: 160,
-    "& div": {
-      backgroundColor: "#33eb91",
-      height: "100%",
-      "& svg": {
-        height: "100%",
-        margin: `0px ${theme.spacing(2)}px`,
-        color: "#fff",
-        fontSize: "1.8rem",
-      },
-    },
-    "& p": {
-      margin: `0px ${theme.spacing(2)}px`,
-    },
-  },
-  paper: {
-    zIndex: 999,
-    position: "absolute",
-    width: "95%",
-    maxHeight: 200,
-    overflowY: "scroll",
-  },
-  addList: {
-    backgroundColor: "#33eb91",
-  },
-  addCustomField: {
-    display: "flex",
-    alignItems: "center",
-    "& svg": {
-      cursor: "pointer",
-    },
-  },
-}));
 
 const StepTwo = ({
+  input,
+  setInput,
   contacts,
   filename,
   newFields,
   setNewFields,
   handleNext,
+  handleBack,
   setNewContact,
+  classes,
 }) => {
-  const classes = useStyles();
-  const [input, setInput] = useState({});
   const [keys] = useState(Object.keys(contacts[0]));
   const [open, setOpen] = useState({});
   const [search, setSearch] = useState("");
@@ -141,7 +73,6 @@ const StepTwo = ({
   };
 
   const confirmFields = () => {
-    console.log(newFields, contacts[0]);
     if (Object.keys(newFields).length === keys.length) {
       const newContact = contacts.map((contact) =>
         renameKeys(newFields, contact)
@@ -181,7 +112,7 @@ const StepTwo = ({
 
   return (
     <div>
-      <div style={{ margin: "0px 16px" }}>
+      <div style={{ margin: "8px 24px" }}>
         <Typography variant="h6">
           Found {contacts.length} conacts in:
         </Typography>
@@ -284,9 +215,14 @@ const StepTwo = ({
           </div>
         ))}
       </div>
-      <Button variant="contained" onClick={confirmFields}>
-        Continue
-      </Button>
+      <div className={classes.btns}>
+        <Button variant="contained" onClick={handleBack}>
+          Back
+        </Button>
+        <Button variant="contained" onClick={confirmFields}>
+          Continue
+        </Button>
+      </div>
     </div>
   );
 };
