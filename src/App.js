@@ -1,9 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 //mui
+import Paper from "@material-ui/core/Paper";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
-import useStyles from "./styles";
+import useStyles, { theme } from "./styles";
+import { ThemeProvider } from "@material-ui/core/styles";
 //components
 import StepOne from "./components/StepOne";
 import StepTwo from "./components/StepTwo";
@@ -26,6 +28,7 @@ export default function App() {
   const [newFields, setNewFields] = useState({});
   const [filename, setFilename] = useState("");
   const [newContact, setNewContact] = useState([]);
+  const [keys, setKeys] = useState([]);
   const [input, setInput] = useState({});
   const steps = getSteps();
 
@@ -43,8 +46,9 @@ export default function App() {
         return (
           <StepOne
             setContacts={setContacts}
-            handleNext={handleNext}
             setFilename={setFilename}
+            setKeys={setKeys}
+            handleNext={handleNext}
             classes={classes}
           />
         );
@@ -52,15 +56,18 @@ export default function App() {
         return (
           <StepTwo
             contacts={contacts}
+            setContacts={setContacts}
+            setFilename={setFilename}
+            setKeys={setKeys}
             filename={filename}
             setNewFields={setNewFields}
             newFields={newFields}
             handleNext={handleNext}
             handleBack={handleBack}
             setNewContact={setNewContact}
-            classes={classes}
             input={input}
             setInput={setInput}
+            keys={keys}
           />
         );
       case 2:
@@ -69,56 +76,53 @@ export default function App() {
             newContact={newContact}
             handleNext={handleNext}
             handleBack={handleBack}
-            classes={classes}
           />
         );
       case 3:
-        return (
-          <StepFour
-            newContact={newContact}
-            handleBack={handleBack}
-            classes={classes}
-          />
-        );
+        return <StepFour newContact={newContact} handleBack={handleBack} />;
       default:
         return "Unknown step";
     }
   }
 
   return (
-    <div className={classes.root}>
-      <Stepper activeStep={activeStep}>
-        {steps.map((label, index) => {
-          const stepProps = {};
-          const labelProps = {};
-          if (index === 0) {
-            labelProps.optional = "File must be CSV, XLS, XLSX or ODS";
-          }
-          if (index === 1) {
-            labelProps.optional =
-              "Map the fields in your spreadsheet to Autopilot's Fields.";
-          }
-          if (index === 2) {
-            labelProps.optional =
-              "Confirm you've correctly mapped your fields.";
-          }
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>
-                <strong>Step {index + 1}:</strong> {label}
-              </StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-      <div>
-        {activeStep === steps.length ? (
-          //When reach last steps
-          <div>Finish</div>
-        ) : (
-          getStepContent(activeStep)
-        )}
+    <ThemeProvider theme={theme}>
+      <div className={classes.root}>
+        <Paper elevation={3} className={classes.stepperPaper}>
+          <Stepper activeStep={activeStep}>
+            {steps.map((label, index) => {
+              const stepProps = {};
+              const labelProps = {};
+              if (index === 0) {
+                labelProps.optional = "File must be CSV, XLS, XLSX or ODS";
+              }
+              if (index === 1) {
+                labelProps.optional =
+                  "Map the fields in your spreadsheet to Autopilot's Fields.";
+              }
+              if (index === 2) {
+                labelProps.optional =
+                  "Confirm you've correctly mapped your fields.";
+              }
+              return (
+                <Step key={label} {...stepProps}>
+                  <StepLabel {...labelProps}>
+                    <strong>Step {index + 1}:</strong> {label}
+                  </StepLabel>
+                </Step>
+              );
+            })}
+          </Stepper>
+        </Paper>
+        <div style={{ height: "100%" }}>
+          {activeStep === steps.length ? (
+            //When reach last steps
+            <div>Finish</div>
+          ) : (
+            getStepContent(activeStep)
+          )}
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }
