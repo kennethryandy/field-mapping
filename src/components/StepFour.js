@@ -18,6 +18,7 @@ import useStyles from "../stepStyles";
 const StepFour = ({ newContact, handleBack }) => {
   const classes = useStyles();
   const [value, setValue] = useState("update_empty");
+  const [loading, setLoading] = useState(false);
   const [importError, setImportError] = useState("");
   const [importSuccess, setImportSuccess] = useState("");
 
@@ -26,6 +27,7 @@ const StepFour = ({ newContact, handleBack }) => {
   };
 
   const handleConfirm = () => {
+    setLoading(true);
     //JSON newContact
     if (value === "update_empty") {
       //Update them with the data in the spreadsheet, but only for fields that are empty
@@ -49,8 +51,9 @@ const StepFour = ({ newContact, handleBack }) => {
       //   setImportError(res.message);
       // }
     } else {
-      return;
+      setLoading(false);
     }
+    setLoading(false);
   };
 
   const handleClose = () => {
@@ -93,13 +96,19 @@ const StepFour = ({ newContact, handleBack }) => {
             </RadioGroup>
           </FormControl>
           <div className={classes.btns} style={{ margin: "16px 24px" }}>
-            <Button onClick={handleBack} variant="outlined" color="primary">
+            <Button
+              onClick={handleBack}
+              variant="outlined"
+              color="primary"
+              disabled={loading}
+            >
               Back
             </Button>
             <Button
               onClick={handleConfirm}
               variant="contained"
               color="secondary"
+              disabled={loading}
             >
               import {newContact.length} contacts
             </Button>

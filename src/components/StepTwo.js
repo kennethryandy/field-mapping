@@ -43,6 +43,7 @@ const StepTwo = ({
   const [search, setSearch] = useState("");
   const [openAdd, setOpenAdd] = useState({});
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [autoPilotField, setAutoPilotField] = useState([
     "Name",
     "Email",
@@ -52,6 +53,13 @@ const StepTwo = ({
   ]);
   const [filteredField, setFilteredField] = useState([]);
   const ref = useOnclickOutside(() => handleClose());
+
+  useEffect(() => {
+    setLoading(true);
+    //Ajax call
+    // setAutoPilotField(response)
+    setLoading(false);
+  }, [setAutoPilotField]);
 
   useEffect(() => {
     setFilteredField(
@@ -162,159 +170,175 @@ const StepTwo = ({
   return (
     <div>
       <div className={classes.stepperSpacer} />
-      <input
-        type="file"
-        hidden={true}
-        id="file"
-        onChange={handleFileChange}
-        accept="text/csv"
-      />
-      <div style={{ margin: "8px 24px" }}>
-        <Typography variant="h6">
-          Found {contacts.length} conacts in:
-        </Typography>
-      </div>
-      <div className={classes.fileHead}>
-        <div className={classes.file}>
-          <div>
-            <CheckIcon />
+      {!loading && (
+        <>
+          <input
+            type="file"
+            hidden={true}
+            id="file"
+            onChange={handleFileChange}
+            accept="text/csv"
+          />
+          <div style={{ margin: "8px 24px" }}>
+            <Typography variant="h6">
+              Found {contacts.length} conacts in:
+            </Typography>
           </div>
-          <Typography variant="body1">{truncate(filename, 16)}</Typography>
-        </div>
-        <div>
-          <MuiLink onClick={openFile} style={{ cursor: "pointer" }}>
-            <Typography variant="body2">Upload different file</Typography>
-          </MuiLink>
-        </div>
-      </div>
-      <div className={classes.table}>
-        <Grid container>
-          <Grid item>
-            <div className={classes.fields}>
-              <div className={classes.keys}>
-                <Typography variant="body1" className={classes.thead}>
-                  Spreadsheet Field
-                </Typography>
+          <div className={classes.fileHead}>
+            <div className={classes.file}>
+              <div>
+                <CheckIcon />
               </div>
-              <div
-                className={classes.input}
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <Typography variant="body1" className={classes.thead}>
-                  Autopilot Field
-                </Typography>
-              </div>
+              <Typography variant="body1">{truncate(filename, 16)}</Typography>
             </div>
-            {keys.map((key, i) => (
-              <div className={classes.fields} key={i}>
-                <div className={classes.keys}>
-                  <Typography variant="body1">{key}</Typography>
-                  <ArrowRightAltIcon />
+            <div>
+              <MuiLink onClick={openFile} style={{ cursor: "pointer" }}>
+                <Typography variant="body2">Upload different file</Typography>
+              </MuiLink>
+            </div>
+          </div>
+          <div className={classes.table}>
+            <Grid container>
+              <Grid item>
+                <div className={classes.fields}>
+                  <div className={classes.keys}>
+                    <Typography variant="body1" className={classes.thead}>
+                      Spreadsheet Field
+                    </Typography>
+                  </div>
+                  <div
+                    className={classes.input}
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
+                    <Typography variant="body1" className={classes.thead}>
+                      Autopilot Field
+                    </Typography>
+                  </div>
                 </div>
-                <div className={classes.input}>
-                  {openAdd[key] ? (
-                    <div className={classes.addCustomField}>
-                      <InputBase
-                        autoComplete="off"
-                        fullWidth
-                        type="text"
-                        name={`add${key}`}
-                        value={input[`add${key}`]}
-                        placeholder="Custom field"
-                        onBlur={() => {
-                          if (input[`add${key}`]) {
-                            setSearch("");
-                            setNewFields((prevState) => ({
-                              ...prevState,
-                              [key]: input[`add${key}`],
-                            }));
-                            setAutoPilotField((prevState) => [
-                              ...prevState,
-                              input[`add${key}`],
-                            ]);
-                          }
-                        }}
-                        onChange={handleAddCustomFieldChange}
-                        endAdornment={
-                          <IconButton onClick={() => setOpen({ [key]: true })}>
-                            <RemoveCircleIcon
-                              onClick={() => handleRemoveAdd(key)}
-                            />
-                          </IconButton>
-                        }
-                      />
+                {keys.map((key, i) => (
+                  <div className={classes.fields} key={i}>
+                    <div className={classes.keys}>
+                      <Typography variant="body1">{key}</Typography>
+                      <ArrowRightAltIcon />
                     </div>
-                  ) : (
-                    <InputBase
-                      type="text"
-                      name={key}
-                      value={input[key]}
-                      onFocus={() => setOpen({ [key]: true })}
-                      onChange={handleChange}
-                      placeholder="Select field"
-                      autoComplete="off"
-                      fullWidth
-                      onBlur={() => {
-                        setSearch("");
-                        if (!(autoPilotField.indexOf(input[key]) > -1)) {
-                          setInput((prevState) => ({
-                            ...prevState,
-                            [key]: "",
-                          }));
-                        }
-                      }}
-                      endAdornment={
-                        <IconButton onClick={() => setOpen({ [key]: true })}>
-                          <UnfoldMoreIcon />
-                        </IconButton>
-                      }
-                    />
-                  )}
-                  {open[key] && (
-                    <Paper elevation={3} className={classes.dropdown} ref={ref}>
-                      <List dense>
-                        <ListItem
-                          button
-                          divider
-                          className={classes.addList}
-                          onClick={() => handleOpenAdd(key)}
+                    <div className={classes.input}>
+                      {openAdd[key] ? (
+                        <div className={classes.addCustomField}>
+                          <InputBase
+                            autoComplete="off"
+                            fullWidth
+                            type="text"
+                            name={`add${key}`}
+                            value={input[`add${key}`]}
+                            placeholder="Custom field"
+                            onBlur={() => {
+                              if (input[`add${key}`]) {
+                                setSearch("");
+                                setNewFields((prevState) => ({
+                                  ...prevState,
+                                  [key]: input[`add${key}`],
+                                }));
+                                setAutoPilotField((prevState) => [
+                                  ...prevState,
+                                  input[`add${key}`],
+                                ]);
+                              }
+                            }}
+                            onChange={handleAddCustomFieldChange}
+                            endAdornment={
+                              <IconButton
+                                onClick={() => setOpen({ [key]: true })}
+                              >
+                                <RemoveCircleIcon
+                                  onClick={() => handleRemoveAdd(key)}
+                                />
+                              </IconButton>
+                            }
+                          />
+                        </div>
+                      ) : (
+                        <InputBase
+                          type="text"
+                          name={key}
+                          value={input[key]}
+                          onFocus={() => setOpen({ [key]: true })}
+                          onChange={handleChange}
+                          placeholder="Select field"
+                          autoComplete="off"
+                          fullWidth
+                          onBlur={() => {
+                            setSearch("");
+                            if (!(autoPilotField.indexOf(input[key]) > -1)) {
+                              setInput((prevState) => ({
+                                ...prevState,
+                                [key]: "",
+                              }));
+                            }
+                          }}
+                          endAdornment={
+                            <IconButton
+                              onClick={() => setOpen({ [key]: true })}
+                            >
+                              <UnfoldMoreIcon />
+                            </IconButton>
+                          }
+                        />
+                      )}
+                      {open[key] && (
+                        <Paper
+                          elevation={3}
+                          className={classes.dropdown}
+                          ref={ref}
                         >
-                          <ListItemIcon>
-                            <AddCircleIcon />
-                          </ListItemIcon>
-                          <ListItemText primary="Add Custom Field" />
-                        </ListItem>
-                        {filteredField.map((field, i) => (
-                          <ListItem
-                            button
-                            divider
-                            onClick={() => handleSelect(key, field)}
-                            key={i}
-                          >
-                            <ListItemText primary={field} />
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Paper>
-                  )}
+                          <List dense>
+                            <ListItem
+                              button
+                              divider
+                              className={classes.addList}
+                              onClick={() => handleOpenAdd(key)}
+                            >
+                              <ListItemIcon>
+                                <AddCircleIcon />
+                              </ListItemIcon>
+                              <ListItemText primary="Add Custom Field" />
+                            </ListItem>
+                            {filteredField.map((field, i) => (
+                              <ListItem
+                                button
+                                divider
+                                onClick={() => handleSelect(key, field)}
+                                key={i}
+                              >
+                                <ListItemText primary={field} />
+                              </ListItem>
+                            ))}
+                          </List>
+                        </Paper>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <div className={classes.btns}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={handleBack}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={confirmFields}
+                    color="secondary"
+                  >
+                    Continue
+                  </Button>
                 </div>
-              </div>
-            ))}
-            <div className={classes.btns}>
-              <Button variant="outlined" color="primary" onClick={handleBack}>
-                Back
-              </Button>
-              <Button
-                variant="contained"
-                onClick={confirmFields}
-                color="secondary"
-              >
-                Continue
-              </Button>
-            </div>
-          </Grid>
-        </Grid>
-      </div>
+              </Grid>
+            </Grid>
+          </div>
+        </>
+      )}
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
